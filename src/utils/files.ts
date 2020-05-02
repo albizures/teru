@@ -6,7 +6,7 @@ const findTokens = async (file: string): Promise<string[]> => {
 	const text = await fs.promises.readFile(file, 'utf8');
 	const tokens = [];
 
-	for (const match of text.matchAll(/\[teru:\w*\]/)) {
+	for (const match of text.matchAll(/\[teru:\w*\]/g)) {
 		tokens.push(match[0]);
 	}
 
