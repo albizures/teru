@@ -1,15 +1,15 @@
-import React from 'react';
-import { Text, Color, Box } from 'ink';
-import Spinner from 'ink-spinner';
-import { clone, gitSetup, installDeps, replaceTokens } from './steps';
 import path from 'path';
+import React from 'react';
+import Spinner from 'ink-spinner';
+import { Text, Color, Box } from 'ink';
+import { clone, gitSetup, installDeps, replaceTokens } from './steps';
 import { States, ProjectConfig, StepStatus, Step } from './types';
 import StepList from './components/StepList';
 import TextInput from 'ink-text-input';
 
 interface PropTypes {
-	name?: string;
-	starter?: string;
+	name: string;
+	starter: string;
 }
 
 const getSpinnerMessage = (state: States) => {
@@ -63,14 +63,6 @@ const App: React.FC<PropTypes> = (props) => {
 				status,
 			}),
 		);
-
-	if (!(name && starter)) {
-		return (
-			<Box>
-				<Text>name and starter are required</Text>
-			</Box>
-		);
-	}
 
 	React.useEffect(() => {
 		const { current: config } = configRef;
@@ -198,18 +190,16 @@ const App: React.FC<PropTypes> = (props) => {
 	}
 
 	if (state === States.Error || !configRef.current) {
-		return (
-			<>
-				<Color green>Something bad happend :(</Color>
-			</>
-		);
+		return <Color red>Something bad happend :(</Color>;
 	}
 
 	const { projectDir } = configRef.current;
 	return (
 		<>
 			<StepList steps={steps} />
-			<Box marginTop={1}>All set up at {projectDir}</Box>
+			<Box marginTop={1}>
+				All set up at <Text underline>{projectDir}</Text>
+			</Box>
 			<Color green>Happy coding :)</Color>
 		</>
 	);
