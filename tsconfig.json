@@ -1,0 +1,23 @@
+{
+	"compilerOptions": {
+		"outDir": "dist",
+		"allowJs": false,
+		"target": "ESNext",
+		"strict": true,
+		"jsx": "react",
+		"strictNullChecks": true,
+		"declarationDir": "dist",
+		"rootDir": "./src",
+		"sourceMap": true,
+		"module": "CommonJS",
+		"moduleResolution": "node",
+		"esModuleInterop": true,
+		"declaration": true,
+		"composite": true,
+		"allowUnreachableCode": true,
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"isolatedModules": true
+	},
+	"include": ["./src/**/*.tsx", "./src/**/*.ts"]
+}
