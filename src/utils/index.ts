@@ -4,7 +4,7 @@ import glob from 'glob';
 import path from 'path';
 import to from 'await-to-js';
 import fs from 'fs-extra';
-import { ProjectConfig } from '../types';
+import { ProjectConfig, StarterConfig } from '../types';
 import { spawn } from './spawn';
 
 type Action = (config: ProjectConfig) => Promise<unknown>;
@@ -62,4 +62,54 @@ const getProjectFiles = (projectDir: string): Promise<string[]> =>
 		);
 	});
 
-export { createStep, install, getProjectFiles };
+const getStarterConfigFile = (projectDir: string) =>
+	path.join(projectDir, 'teru.starter.js');
+
+const defaultStaterConfig = {
+	tokens: {
+		name(config: ProjectConfig) {
+			return {
+				defaultValue: config.name,
+			};
+		},
+	},
+};
+
+const getStarterConfig = (projectDir: string): StarterConfig => {
+	const configFile = getStarterConfigFile(projectDir);
+	if (!fs.existsSync(configFile)) {
+		return defaultStaterConfig;
+	}
+	const config = require(configFile);
+
+	if (!config) {
+		return defaultStaterConfig;
+	}
+
+	if (!config.tokens) {
+		config.tokens = defaultStaterConfig.tokens;
+	}
+
+	if (!config.tokens.name) {
+		config.tokens.name = defaultStaterConfig.tokens.name;
+	}
+
+	return config;
+};
+
+const deleteStarterConfigfile = (projectDir: string) => {
+	const configFile = getStarterConfigFile(projectDir);
+	if (!fs.existsSync(configFile)) {
+		return;
+	}
+
+	fs.unlinkSync(configFile);
+};
+
+export {
+	createStep,
+	install,
+	getProjectFiles,
+	deleteStarterConfigfile,
+	getStarterConfig,
+};

@@ -10,6 +10,7 @@ import TextInput from 'ink-text-input';
 interface PropTypes {
 	name: string;
 	starter: string;
+	verbose: boolean;
 }
 
 const getSpinnerMessage = (state: States) => {
@@ -49,7 +50,7 @@ const wait = () =>
 	});
 
 const App: React.FC<PropTypes> = (props) => {
-	const { name, starter } = props;
+	const { name, starter, verbose = false } = props;
 	const configRef = React.useRef<ProjectConfig>();
 	const [steps, setSteps] = React.useState<Step[]>([]);
 	const [state, setState] = React.useState(States.Idle);
@@ -104,8 +105,7 @@ const App: React.FC<PropTypes> = (props) => {
 			}
 
 			if (state === States.InstallingDeps) {
-				await wait();
-				// await installDeps(projectDir);
+				await installDeps(config);
 				pushStep(installDeps.stepName, StepStatus.Done);
 
 				setState(States.Finished);
@@ -114,6 +114,9 @@ const App: React.FC<PropTypes> = (props) => {
 
 		run().catch((error: Error) => {
 			setState(States.Error);
+			if (verbose) {
+				console.log(error);
+			}
 		});
 	}, [state]);
 

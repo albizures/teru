@@ -1,15 +1,43 @@
-import { createStep, install, getProjectFiles } from './utils';
+import {
+	createStep,
+	install,
+	getProjectFiles,
+	getStarterConfig,
+	deleteStarterConfigfile,
+} from './utils';
 import { cloneRepo, gitInit } from './utils/git';
 import {
 	findTokens,
 	replaceTokens as replaceTokensInFiles,
 } from './utils/files';
-import { ProjectConfig } from './types';
+import { ProjectConfig, StarterConfig } from './types';
+
+const getTokenDefaultValue = (
+	starterConfig: StarterConfig,
+	tokenId: string,
+	config: ProjectConfig,
+) => {
+	const token = starterConfig.tokens[tokenId];
+	if (token) {
+		return String(
+			typeof token === 'function'
+				? token(config).defaultValue
+				: token.defaultValue,
+		);
+	}
+
+	return '';
+};
 
 const clone = createStep('Create Project ', async (config: ProjectConfig) => {
-	await cloneRepo(config.starter, config.projectDir);
-	const files = await getProjectFiles(config.projectDir);
+	const { projectDir, starter } = config;
+	await cloneRepo(starter, projectDir);
 
+	const starterConfig = getStarterConfig(projectDir);
+
+	deleteStarterConfigfile(projectDir);
+
+	const files = await getProjectFiles(projectDir);
 	let fileTokens: string[] = [];
 
 	for (const file of files) {
@@ -21,8 +49,9 @@ const clone = createStep('Create Project ', async (config: ProjectConfig) => {
 	config.tokens = Array.from(new Set(fileTokens)).map((match) => {
 		const name = match.replace(/\\/g, '');
 		const id = name.replace('[teru:', '').replace(']', '');
-		const configValue = config[id as keyof ProjectConfig];
-		const value = typeof configValue === 'string' ? configValue : '';
+
+		const value = getTokenDefaultValue(starterConfig, id, config);
+
 		return {
 			name,
 			match: match.replace('[', '\\[').replace(']', '\\]'),

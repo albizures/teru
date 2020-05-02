@@ -32,3 +32,16 @@ export interface Step {
 	name: string;
 	status: StepStatus;
 }
+
+export type StaterTokenValue = string | boolean | number;
+
+export interface StarterToken {
+	defaultValue: StaterTokenValue;
+}
+
+export interface StarterConfig {
+	tokens: Record<
+		string,
+		StarterToken | ((config: ProjectConfig) => StarterToken)
+	>;
+}
