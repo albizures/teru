@@ -144,8 +144,12 @@ const App: React.FC<PropTypes> = (props) => {
 			return;
 		}
 
-		config.tokens[currentToken].value =
-			tokenValue || config.tokens[currentToken].value;
+		const token = config.tokens[currentToken];
+		token.value = tokenValue || token.value;
+
+		if (!token.value) {
+			return;
+		}
 
 		if (currentToken === config.tokens.length - 1) {
 			setState(States.ReplaceTokens);
