@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, Color, Box, Static } from 'ink';
+import { Color, Box } from 'ink';
 import { Step, StepStatus } from '../types';
 
 interface PropTypes {

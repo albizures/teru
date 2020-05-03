@@ -118,7 +118,7 @@ const App: React.FC<PropTypes> = (props) => {
 				console.log(error);
 			}
 		});
-	}, [state]);
+	}, [state, verbose]);
 
 	React.useEffect(() => {
 		const currentDir = process.cwd();
@@ -132,7 +132,7 @@ const App: React.FC<PropTypes> = (props) => {
 		};
 
 		setState(States.Cloning);
-	}, []);
+	}, [starter, name]);
 
 	const spinnerMessage = getSpinnerMessage(state);
 
