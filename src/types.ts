@@ -1,13 +1,3 @@
-export enum States {
-	Idle,
-	Cloning,
-	GitInit,
-	InstallingDeps,
-	Finished,
-	Error,
-	TokenValues,
-	ReplaceTokens,
-}
 export interface Token {
 	name: string;
 	value: string;

@@ -3,9 +3,20 @@ import React from 'react';
 import Spinner from 'ink-spinner';
 import { Text, Color, Box } from 'ink';
 import { clone, gitSetup, installDeps, replaceTokens } from './steps';
-import { States, ProjectConfig, StepStatus, Step } from './types';
+import { ProjectConfig, StepStatus, Step } from './types';
 import StepList from './components/StepList';
 import TextInput from 'ink-text-input';
+import ErrorMessage from './components/ErrorMessage';
+
+export enum States {
+	Idle,
+	Cloning,
+	GitInit,
+	InstallingDeps,
+	Finished,
+	TokenValues,
+	ReplaceTokens,
+}
 
 interface PropTypes {
 	name: string;
@@ -49,6 +60,7 @@ const App: React.FC<PropTypes> = (props) => {
 	const [state, setState] = React.useState(States.Idle);
 	const [currentToken, setCurrentToken] = React.useState(0);
 	const [tokenValue, setTokenValue] = React.useState('');
+	const [currentError, setError] = React.useState<Error>();
 
 	const pushStep = (name: string, status: StepStatus) =>
 		setSteps((steps) =>
@@ -105,10 +117,7 @@ const App: React.FC<PropTypes> = (props) => {
 		};
 
 		run().catch((error: Error) => {
-			setState(States.Error);
-			if (verbose) {
-				console.log(error);
-			}
+			setError(error);
 		});
 	}, [state, verbose]);
 
@@ -188,8 +197,13 @@ const App: React.FC<PropTypes> = (props) => {
 		);
 	}
 
-	if (state === States.Error || !configRef.current) {
-		return <Color red>Something bad happend :(</Color>;
+	if (!configRef.current || currentError) {
+		return (
+			<ErrorMessage
+				verbose={verbose}
+				error={currentError || new Error('Missing config')}
+			/>
+		);
 	}
 
 	const { projectDir } = configRef.current;
