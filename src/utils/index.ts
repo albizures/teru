@@ -1,6 +1,5 @@
 // @ts-ignore
 import yarnOrNpm from 'yarn-or-npm';
-import glob from 'glob';
 import path from 'path';
 import to from 'await-to-js';
 import fs from 'fs-extra';
@@ -44,28 +43,10 @@ const install = async (projectDir: string): Promise<void> => {
 	process.chdir(prevDir);
 };
 
-const getProjectFiles = (projectDir: string): Promise<string[]> =>
-	new Promise((resolve, reject) => {
-		glob(
-			path.join(projectDir, '**', '*'),
-			{
-				dot: true,
-				nodir: true,
-			},
-			(error, files) => {
-				if (error) {
-					return reject(error);
-				}
-
-				resolve(files);
-			},
-		);
-	});
-
 const getStarterConfigFile = (projectDir: string) =>
 	path.join(projectDir, 'teru.starter.js');
 
-const defaultStaterConfig = {
+const defaultStaterConfig: StarterConfig = {
 	tokens: {
 		name(config: ProjectConfig) {
 			return {
@@ -73,6 +54,7 @@ const defaultStaterConfig = {
 			};
 		},
 	},
+	files: [],
 };
 
 const getStarterConfig = (projectDir: string): StarterConfig => {
@@ -106,10 +88,4 @@ const deleteStarterConfigfile = (projectDir: string) => {
 	fs.unlinkSync(configFile);
 };
 
-export {
-	createStep,
-	install,
-	getProjectFiles,
-	deleteStarterConfigfile,
-	getStarterConfig,
-};
+export { createStep, install, deleteStarterConfigfile, getStarterConfig };

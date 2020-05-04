@@ -1,13 +1,13 @@
 import {
 	createStep,
 	install,
-	getProjectFiles,
 	getStarterConfig,
 	deleteStarterConfigfile,
 } from './utils';
 import { cloneRepo, gitInit } from './utils/git';
 import {
 	findTokens,
+	getProjectFiles,
 	replaceTokens as replaceTokensInFiles,
 } from './utils/files';
 import { ProjectConfig, StarterConfig } from './types';

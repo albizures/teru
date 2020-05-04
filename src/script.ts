@@ -1,13 +1,15 @@
 import React from 'react';
 import { render } from 'ink';
 import meow from 'meow';
-import App from './index';
 import hostedGitInfo from 'hosted-git-info';
+import App from './index';
+import Starter from './Starter';
 
 const cli = meow(
 	`
 	Usage
 		$ teru <name> <starter>
+		$ teru starter analyze
 		
 	Options
 		--verbose, -v
@@ -28,6 +30,12 @@ const cli = meow(
 
 const run = () => {
 	const [name, starter] = cli.input;
+
+	if (name === 'starter' && starter === 'analyze') {
+		render(React.createElement(Starter, { ...cli.flags }));
+		return;
+	}
+
 	const isValidStarter = Boolean(hostedGitInfo.fromUrl(starter));
 
 	if (name && starter && isValidStarter) {

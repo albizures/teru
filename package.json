@@ -1,7 +1,7 @@
 {
 	"name": "teru",
 	"version": "0.0.2",
-	"main": "index.js",
+	"main": "./dist/index.js",
 	"author": "Jose Albizures",
 	"license": "MIT",
 	"bin": {
@@ -20,11 +20,13 @@
 	],
 	"devDependencies": {
 		"@albizures/prettier-config": "^1.0.0",
+		"@types/ejs": "^3.0.3",
 		"@types/fs-extra": "^8.1.0",
 		"@types/glob": "^7.1.1",
 		"@types/hosted-git-info": "^3.0.0",
 		"@types/ink-spinner": "^3.0.0",
 		"@types/node": "^13.13.4",
+		"@types/prettier": "^2.0.0",
 		"@types/react": "^16.9.34",
 		"@typescript-eslint/eslint-plugin": "^2.30.0",
 		"@typescript-eslint/parser": "^2.30.0",
@@ -37,6 +39,7 @@
 	},
 	"dependencies": {
 		"await-to-js": "^2.1.1",
+		"ejs": "^3.1.2",
 		"execa": "^4.0.0",
 		"fs-extra": "^9.0.0",
 		"glob": "^7.1.6",

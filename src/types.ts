@@ -36,12 +36,21 @@ export interface Step {
 export type StaterTokenValue = string | boolean | number;
 
 export interface StarterToken {
-	defaultValue: StaterTokenValue;
+	defaultValue?: StaterTokenValue;
 }
 
+export interface StarterFileConfig {
+	filename: string;
+	onlyWhen?: Record<string, unknown>;
+}
+
+export type StarterFile = StarterFileConfig | string;
+export type TokeConfig =
+	| StarterToken
+	| ((config: ProjectConfig) => StarterToken);
+export type TokenConfigs = Record<string, TokeConfig>;
+
 export interface StarterConfig {
-	tokens: Record<
-		string,
-		StarterToken | ((config: ProjectConfig) => StarterToken)
-	>;
+	tokens: TokenConfigs;
+	files: StarterFile[];
 }

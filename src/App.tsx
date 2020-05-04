@@ -42,13 +42,6 @@ const isSpinnerNeeded = (state: States) => {
 	);
 };
 
-const wait = () =>
-	new Promise((resolve) => {
-		setTimeout(() => {
-			resolve();
-		}, 1000);
-	});
-
 const App: React.FC<PropTypes> = (props) => {
 	const { name, starter, verbose = false } = props;
 	const configRef = React.useRef<ProjectConfig>();
@@ -97,8 +90,7 @@ const App: React.FC<PropTypes> = (props) => {
 			}
 
 			if (state === States.GitInit) {
-				await wait();
-				// await gitSetup(projectDir);
+				await gitSetup(config);
 				pushStep(gitSetup.stepName, StepStatus.Done);
 
 				setState(States.InstallingDeps);
