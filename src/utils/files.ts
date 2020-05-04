@@ -84,7 +84,7 @@ const analyzeFile = async (filename: string) => {
 	);
 
 	return {
-		files: config
+		file: config
 			? {
 					...(config as StarterFileConfig),
 					filename,
@@ -103,9 +103,9 @@ const analyzeProject = async (projectDir: string) => {
 		(value, data) => {
 			if (
 				(data.tokens && data.tokens.length > 0) ||
-				typeof value.files === 'object'
+				typeof data.file === 'object'
 			) {
-				value.files.push(data.files);
+				value.files.push(data.file);
 			}
 			data.tokens.forEach((token) => value.tokens.add(token));
 
@@ -134,6 +134,7 @@ const serializeConfig = (config: StarterConfig) => {
 		useTabs: true,
 		tabWidth: 2,
 		semi: true,
+		printWidth: 40,
 		jsxSingleQuote: false,
 		singleQuote: true,
 		bracketSpacing: true,
@@ -199,11 +200,9 @@ const mergeStarterConfigs = (
 		return result.concat(newFile);
 	}, [] as StarterFile[]);
 
-	console.log(oldFiles);
-
 	return {
 		tokens,
-		files: files.concat(oldFiles),
+		files: files.concat(oldFiles.filter((file) => typeof file !== 'string')),
 	};
 };
 
