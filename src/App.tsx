@@ -178,7 +178,7 @@ const App: React.FC<PropTypes> = (props) => {
 
 	if (state === States.TokenValues && configRef.current) {
 		const { current: config } = configRef;
-		const { name, value } = config.tokens[currentToken];
+		const { title, value, message } = config.tokens[currentToken];
 		const oldValue =
 			value !== '' && tokenValue === '' ? <Color gray>({value}) </Color> : '';
 
@@ -186,7 +186,14 @@ const App: React.FC<PropTypes> = (props) => {
 			<>
 				<StepList steps={steps} />
 				<Box>
-					Enter the value for <Text bold>{name}</Text>: {oldValue}
+					{message ? (
+						<>{message}</>
+					) : (
+						<>
+							Enter the value for <Text bold>{title}</Text>
+						</>
+					)}
+					: {oldValue}
 					<TextInput
 						value={tokenValue}
 						onChange={onChange}

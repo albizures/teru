@@ -1,8 +1,11 @@
 export interface Token {
-	name: string;
+	id: string;
+	title: string;
 	value: string;
-	match: string;
+	message?: string;
 }
+
+export type TokenValues = Record<string, unknown>;
 
 export interface ProjectConfig {
 	name: string;
@@ -10,6 +13,7 @@ export interface ProjectConfig {
 	projectDir: string;
 	starter: string;
 	tokens: Token[];
+	starterConfig?: StarterConfig;
 }
 
 export enum StepStatus {
@@ -26,6 +30,8 @@ export interface Step {
 export type StaterTokenValue = string | boolean | number;
 
 export interface StarterToken {
+	title?: string;
+	message?: string;
 	defaultValue?: StaterTokenValue;
 }
 

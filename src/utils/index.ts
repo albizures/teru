@@ -60,6 +60,7 @@ const defaultStaterConfig: StarterConfig = {
 const getStarterConfig = (projectDir: string): StarterConfig => {
 	const configFile = getStarterConfigFile(projectDir);
 	if (!fs.existsSync(configFile)) {
+		// TODO: analyze starter
 		return defaultStaterConfig;
 	}
 	const config = require(configFile);
@@ -72,7 +73,7 @@ const getStarterConfig = (projectDir: string): StarterConfig => {
 		config.tokens = defaultStaterConfig.tokens;
 	}
 
-	if (!config.tokens.name) {
+	if (!config.tokens.name || !config.tokens.name.defaultValue) {
 		config.tokens.name = defaultStaterConfig.tokens.name;
 	}
 

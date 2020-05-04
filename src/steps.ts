@@ -6,27 +6,13 @@ import {
 } from './utils';
 import { cloneRepo, gitInit } from './utils/git';
 import {
-	findTokens,
-	getProjectFiles,
 	replaceTokens as replaceTokensInFiles,
+	deleteFile,
 } from './utils/files';
-import { ProjectConfig, StarterConfig } from './types';
+import { ProjectConfig, Token, TokeConfig, TokenValues } from './types';
 
-const getTokenDefaultValue = (
-	starterConfig: StarterConfig,
-	tokenId: string,
-	config: ProjectConfig,
-) => {
-	const token = starterConfig.tokens[tokenId];
-	if (token) {
-		return String(
-			typeof token === 'function'
-				? token(config).defaultValue
-				: token.defaultValue,
-		);
-	}
-
-	return '';
+const getTokenConfig = (token: TokeConfig, config: ProjectConfig) => {
+	return typeof token === 'function' ? token(config) : token;
 };
 
 const clone = createStep('Create Project ', async (config: ProjectConfig) => {
@@ -37,33 +23,61 @@ const clone = createStep('Create Project ', async (config: ProjectConfig) => {
 
 	deleteStarterConfigfile(projectDir);
 
-	const files = await getProjectFiles(projectDir);
-	let fileTokens: string[] = [];
+	config.tokens = Object.keys(starterConfig.tokens).reduce((tokens, key) => {
+		const token = getTokenConfig(starterConfig.tokens[key], config);
+		tokens.push({
+			id: key,
+			message: token.message,
+			title: token.title || key,
+			value: String(token.defaultValue || ''),
+		});
 
-	for (const file of files) {
-		fileTokens = fileTokens.concat(await findTokens(file));
-	}
-
-	config.files = files;
-
-	config.tokens = Array.from(new Set(fileTokens)).map((match) => {
-		const name = match.replace(/\\/g, '');
-		const id = name.replace('[teru:', '').replace(']', '');
-
-		const value = getTokenDefaultValue(starterConfig, id, config);
-
-		return {
-			name,
-			match: match.replace('[', '\\[').replace(']', '\\]'),
-			value,
-		};
-	});
+		return tokens;
+	}, [] as Token[]);
+	config.starterConfig = starterConfig;
 });
 
 const replaceTokens = createStep(
 	'Replace Tokens',
 	async (config: ProjectConfig) => {
-		await replaceTokensInFiles(config.files, config.tokens);
+		const { tokens, starterConfig } = config;
+
+		if (!starterConfig) {
+			throw new Error('Missing starter config');
+		}
+
+		const tokenValues = tokens.reduce((values, token) => {
+			values[token.id] = token.value;
+
+			return values;
+		}, {} as TokenValues);
+
+		const files: string[] = starterConfig.files
+			.map((file) => {
+				if (typeof file === 'string') {
+					return file;
+				}
+
+				const { onlyWhen, filename } = file;
+				if (onlyWhen) {
+					const toBeRemove = !Object.keys(onlyWhen).every((token) => {
+						return (
+							onlyWhen[token] ===
+							//  === 'true' is a workaround until different value are supported
+							(tokenValues[token] === 'true' || tokenValues[token])
+						);
+					});
+
+					if (toBeRemove) {
+						deleteFile(config.projectDir, filename);
+						return '';
+					}
+				}
+				return file.filename;
+			})
+			.filter((file) => file);
+
+		await replaceTokensInFiles(config, files, tokenValues);
 	},
 );
 

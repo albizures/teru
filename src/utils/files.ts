@@ -3,15 +3,31 @@ import path from 'path';
 import ejs from 'ejs';
 import glob from 'glob';
 import prettier from 'prettier';
-import { replaceInFile as replace } from 'replace-in-file';
 import {
-	Token,
 	StarterConfig,
 	StarterFile,
 	StarterFileConfig,
 	TokenConfigs,
 	TokeConfig,
+	TokenValues,
+	ProjectConfig,
 } from '../types';
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = function () {};
+
+const compileFile = async (file: string, tokens: Record<string, unknown>) => {
+	const str = await ejs.renderFile(
+		file,
+		{
+			tokens,
+			file: noop,
+		},
+		{ async: true },
+	);
+
+	await fs.promises.writeFile(file, str);
+};
 
 const getProjectFiles = (projectDir: string): Promise<string[]> =>
 	new Promise((resolve, reject) => {
@@ -33,32 +49,16 @@ const getProjectFiles = (projectDir: string): Promise<string[]> =>
 		);
 	});
 
-const findTokens = async (file: string): Promise<string[]> => {
-	const text = await fs.promises.readFile(file, 'utf8');
-	const tokens = [];
-
-	for (const match of text.matchAll(/\[teru:\w*\]/g)) {
-		tokens.push(match[0]);
-	}
-
-	return tokens;
-};
-
-const replaceTokens = async (files: string[], tokens: Token[]) => {
-	const { to, from } = tokens.reduce(
-		(result, { match, value }) => {
-			result.from.push(new RegExp(match, 'g'));
-			result.to.push(value);
-			return result;
-		},
-		{ to: [] as string[], from: [] as RegExp[] },
+const replaceTokens = async (
+	config: ProjectConfig,
+	files: string[],
+	tokens: TokenValues,
+) => {
+	await Promise.all(
+		files.map((file) => {
+			return compileFile(path.join(config.projectDir, file), tokens);
+		}),
 	);
-
-	await replace({
-		to,
-		from,
-		files,
-	});
 };
 
 const analyzeFile = async (filename: string) => {
@@ -222,14 +222,12 @@ const writeStarterConfig = async (
 	await fs.promises.writeFile(filename, serializeConfig(mergedConfig), 'utf8');
 };
 
-const compileFile = async (file: string) => {
-	const str = await ejs.renderFile(file, {}, { async: true });
-
-	await fs.promises.writeFile(file, str);
+const deleteFile = (projectDir: string, file: string) => {
+	fs.unlink(path.join(projectDir, file));
 };
 
 export {
-	findTokens,
+	deleteFile,
 	replaceTokens,
 	compileFile,
 	analyzeFile,
