@@ -2,7 +2,7 @@ import path from 'path';
 import React from 'react';
 import Spinner from 'ink-spinner';
 import { Text, Color, Box } from 'ink';
-import { clone, gitSetup, installDeps, replaceTokens } from './steps';
+import { clone, gitSetup, installDeps, compile } from './steps';
 import { ProjectConfig, StepStatus, Step } from './types';
 import StepList from './components/StepList';
 import TextInput from 'ink-text-input';
@@ -15,7 +15,7 @@ export enum States {
 	InstallingDeps,
 	Finished,
 	TokenValues,
-	ReplaceTokens,
+	Compile,
 }
 
 interface PropTypes {
@@ -86,16 +86,16 @@ const App: React.FC<PropTypes> = (props) => {
 					setState(States.TokenValues);
 					setCurrentToken(0);
 				} else {
-					pushStep(replaceTokens.stepName, StepStatus.Skip);
+					pushStep(compile.stepName, StepStatus.Skip);
 					setState(States.GitInit);
 				}
 				return;
 			}
 
-			if (state === States.ReplaceTokens) {
-				await replaceTokens(config);
+			if (state === States.Compile) {
+				await compile(config);
 				pushStep(
-					replaceTokens.stepName + ` (${config.tokens.length} tokens)`,
+					compile.stepName + ` (${config.tokens.length} tokens)`,
 					StepStatus.Done,
 				);
 				setState(States.GitInit);
@@ -156,7 +156,7 @@ const App: React.FC<PropTypes> = (props) => {
 		}
 
 		if (currentToken === config.tokens.length - 1) {
-			setState(States.ReplaceTokens);
+			setState(States.Compile);
 		} else {
 			setTokenValue('');
 			setCurrentToken(currentToken + 1);

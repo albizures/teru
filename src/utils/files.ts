@@ -49,7 +49,7 @@ const getProjectFiles = (projectDir: string): Promise<string[]> =>
 		);
 	});
 
-const replaceTokens = async (
+const compileFiles = async (
 	config: ProjectConfig,
 	files: string[],
 	tokens: TokenValues,
@@ -228,7 +228,7 @@ const deleteFile = (projectDir: string, file: string) => {
 
 export {
 	deleteFile,
-	replaceTokens,
+	compileFiles,
 	compileFile,
 	analyzeFile,
 	getProjectFiles,

@@ -5,10 +5,7 @@ import {
 	deleteStarterConfigfile,
 } from './utils';
 import { cloneRepo, gitInit } from './utils/git';
-import {
-	replaceTokens as replaceTokensInFiles,
-	deleteFile,
-} from './utils/files';
+import { compileFiles, deleteFile } from './utils/files';
 import { ProjectConfig, Token, TokeConfig, TokenValues } from './types';
 
 const getTokenConfig = (token: TokeConfig, config: ProjectConfig) => {
@@ -37,8 +34,8 @@ const clone = createStep('Create Project ', async (config: ProjectConfig) => {
 	config.starterConfig = starterConfig;
 });
 
-const replaceTokens = createStep(
-	'Replace Tokens',
+const compile = createStep(
+	'Compile templates',
 	async (config: ProjectConfig) => {
 		const { tokens, starterConfig } = config;
 
@@ -77,7 +74,7 @@ const replaceTokens = createStep(
 			})
 			.filter((file) => file);
 
-		await replaceTokensInFiles(config, files, tokenValues);
+		await compileFiles(config, files, tokenValues);
 	},
 );
 
@@ -90,4 +87,4 @@ const installDeps = createStep(
 	(config: ProjectConfig) => install(config.projectDir),
 );
 
-export { clone, gitSetup, installDeps, replaceTokens };
+export { clone, gitSetup, installDeps, compile };
