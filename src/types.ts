@@ -1,7 +1,7 @@
 export interface Token {
 	id: string;
 	title: string;
-	value: string;
+	value: string | boolean | number;
 	message?: string;
 }
 

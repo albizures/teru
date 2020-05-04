@@ -1,3 +1,4 @@
+import yn from 'yn';
 import path from 'path';
 import React from 'react';
 import Spinner from 'ink-spinner';
@@ -23,6 +24,21 @@ interface PropTypes {
 	starter: string;
 	verbose: boolean;
 }
+
+const getDefaultValueLabel = (
+	value: string | boolean | number,
+	currentValue: string,
+) => {
+	if (typeof value === 'boolean') {
+		return value ? ' Y/n' : ' y/N';
+	}
+
+	return value !== '' && currentValue === '' ? (
+		<Color gray> ({value})</Color>
+	) : (
+		''
+	);
+};
 
 const getSpinnerMessage = (state: States) => {
 	if (state === States.Idle) {
@@ -149,9 +165,14 @@ const App: React.FC<PropTypes> = (props) => {
 		}
 
 		const token = config.tokens[currentToken];
-		token.value = tokenValue || token.value;
 
-		if (!token.value) {
+		if (typeof token.value === 'boolean') {
+			token.value = yn(tokenValue, { default: token.value });
+		} else {
+			token.value = tokenValue || token.value;
+		}
+
+		if (token.value === '') {
 			return;
 		}
 
@@ -179,8 +200,7 @@ const App: React.FC<PropTypes> = (props) => {
 	if (state === States.TokenValues && configRef.current) {
 		const { current: config } = configRef;
 		const { title, value, message } = config.tokens[currentToken];
-		const oldValue =
-			value !== '' && tokenValue === '' ? <Color gray>({value}) </Color> : '';
+		const defaultValueLabel = getDefaultValueLabel(value, tokenValue);
 
 		return (
 			<>
@@ -193,7 +213,7 @@ const App: React.FC<PropTypes> = (props) => {
 							Enter the value for <Text bold>{title}</Text>
 						</>
 					)}
-					: {oldValue}
+					{defaultValueLabel}:{' '}
 					<TextInput
 						value={tokenValue}
 						onChange={onChange}

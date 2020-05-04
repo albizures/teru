@@ -133,6 +133,13 @@
     "@types/prop-types" "*"
     csstype "^2.2.0"
 
+"@types/yn@^3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@types/yn/-/yn-3.1.0.tgz#02e522edc6f869db59326b12caaaa10db97dcc5e"
+  integrity sha512-Qs2tU/syFYlALjR3EoT+NcvpMwAd6voSiDxW+c8bhAN1WbzQUnRfWTmttORf4R1WqDUT+dvHKj+llupSxs0O/w==
+  dependencies:
+    yn "*"
+
 "@types/yoga-layout@1.9.1":
   version "1.9.1"
   resolved "https://registry.yarnpkg.com/@types/yoga-layout/-/yoga-layout-1.9.1.tgz#6c00e4a151a9a529397d580e2cf6f3947a42a928"
@@ -2132,6 +2139,11 @@ yarn-or-npm@^3.0.1:
   dependencies:
     cross-spawn "^6.0.5"
     pkg-dir "^4.2.0"
+
+yn@*, yn@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/yn/-/yn-4.0.0.tgz#611480051ea43b510da1dfdbe177ed159f00a979"
+  integrity sha512-huWiiCS4TxKc4SfgmTwW1K7JmXPPAmuXWYy4j9qjQo4+27Kni8mGhAAi1cloRWmBe2EqcLgt3IGqQoRL/MtPgg==
 
 yoga-layout-prebuilt@^1.9.3:
   version "1.9.5"

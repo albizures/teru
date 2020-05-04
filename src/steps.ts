@@ -26,7 +26,10 @@ const clone = createStep('Create Project ', async (config: ProjectConfig) => {
 			id: key,
 			message: token.message,
 			title: token.title || key,
-			value: String(token.defaultValue || ''),
+			value:
+				typeof token.defaultValue === 'boolean'
+					? token.defaultValue
+					: token.defaultValue || '',
 		});
 
 		return tokens;
