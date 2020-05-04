@@ -21,7 +21,7 @@ const getProjectFiles = (projectDir: string): Promise<string[]> =>
 				cwd: projectDir,
 				dot: true,
 				nodir: true,
-				ignore: ['.git/**'],
+				ignore: ['.git/**', 'teru.starter.js'],
 			},
 			(error, files) => {
 				if (error) {
