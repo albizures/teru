@@ -1,6 +1,6 @@
 {
 	"name": "teru",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"main": "./dist/index.js",
 	"author": "Jose Albizures",
 	"license": "MIT",
@@ -34,11 +34,11 @@
 		"eslint": "^6.8.0",
 		"eslint-plugin-react": "^7.19.0",
 		"eslint-plugin-react-hooks": "^4.0.0",
-		"prettier": "^2.0.5",
 		"source-map-support": "^0.5.19",
 		"typescript": "^3.8.3"
 	},
 	"dependencies": {
+		"prettier": "^2.0.5",
 		"await-to-js": "^2.1.1",
 		"ejs": "^3.1.2",
 		"execa": "^4.0.0",
