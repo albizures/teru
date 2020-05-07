@@ -1,12 +1,11 @@
-import yn from 'yn';
 import path from 'path';
 import React from 'react';
 import Spinner from 'ink-spinner';
 import { Text, Color, Box } from 'ink';
 import { clone, gitSetup, installDeps, compile } from './steps';
-import { ProjectConfig, StepStatus, Step } from './types';
+import { ProjectConfig, StepStatus, Step, Value } from './types';
 import StepList from './components/StepList';
-import TextInput from 'ink-text-input';
+import Form from './components/Form';
 import ErrorMessage from './components/ErrorMessage';
 
 export enum States {
@@ -24,21 +23,6 @@ interface PropTypes {
 	starter: string;
 	verbose: boolean;
 }
-
-const getDefaultValueLabel = (
-	value: string | boolean | number,
-	currentValue: string,
-) => {
-	if (typeof value === 'boolean') {
-		return value ? ' Y/n' : ' y/N';
-	}
-
-	return value !== '' && currentValue === '' ? (
-		<Color gray> ({value})</Color>
-	) : (
-		''
-	);
-};
 
 const getSpinnerMessage = (state: States) => {
 	if (state === States.Idle) {
@@ -74,8 +58,6 @@ const App: React.FC<PropTypes> = (props) => {
 	const configRef = React.useRef<ProjectConfig>();
 	const [steps, setSteps] = React.useState<Step[]>([]);
 	const [state, setState] = React.useState(States.Idle);
-	const [currentToken, setCurrentToken] = React.useState(0);
-	const [tokenValue, setTokenValue] = React.useState('');
 	const [currentError, setError] = React.useState<Error>();
 
 	const pushStep = (name: string, status: StepStatus) =>
@@ -100,7 +82,6 @@ const App: React.FC<PropTypes> = (props) => {
 
 				if (config.tokens.length > 0) {
 					setState(States.TokenValues);
-					setCurrentToken(0);
 				} else {
 					pushStep(compile.stepName, StepStatus.Skip);
 					setState(States.GitInit);
@@ -153,41 +134,10 @@ const App: React.FC<PropTypes> = (props) => {
 
 	const spinnerMessage = getSpinnerMessage(state);
 
-	const onChange = (value: string) => {
-		setTokenValue(value);
-	};
-
-	const onSubmit = () => {
-		const { current: config } = configRef;
-
-		if (!config) {
-			return;
-		}
-
-		const token = config.tokens[currentToken];
-
-		if (typeof token.value === 'boolean') {
-			token.value = yn(tokenValue, { default: token.value });
-		} else {
-			token.value = tokenValue || token.value;
-		}
-
-		if (token.value === '') {
-			return;
-		}
-
-		if (currentToken === config.tokens.length - 1) {
-			setState(States.Compile);
-		} else {
-			setTokenValue('');
-			setCurrentToken(currentToken + 1);
-		}
-	};
-
 	if (isSpinnerNeeded(state)) {
 		return (
 			<>
-				<Box marginTop={1}>
+				<Box>
 					<Color green>
 						<Spinner type="dots" />
 					</Color>{' '}
@@ -199,29 +149,14 @@ const App: React.FC<PropTypes> = (props) => {
 
 	if (state === States.TokenValues && configRef.current) {
 		const { current: config } = configRef;
-		const { title, value, message } = config.tokens[currentToken];
-		const defaultValueLabel = getDefaultValueLabel(value, tokenValue);
+		const onFinish = (values: Record<string, Value>) => {
+			config.tokens.forEach((token) => {
+				token.value = values[token.id];
+			});
+			setState(States.Compile);
+		};
 
-		return (
-			<>
-				<StepList steps={steps} />
-				<Box>
-					{message ? (
-						<>{message}</>
-					) : (
-						<>
-							Enter the value for <Text bold>{title}</Text>
-						</>
-					)}
-					{defaultValueLabel}:{' '}
-					<TextInput
-						value={tokenValue}
-						onChange={onChange}
-						onSubmit={onSubmit}
-					/>
-				</Box>
-			</>
-		);
+		return <Form items={config.tokens} onFinish={onFinish} />;
 	}
 
 	if (!configRef.current || currentError) {

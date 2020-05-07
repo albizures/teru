@@ -1,7 +1,9 @@
+export type Value = string | boolean | number;
+
 export interface Token {
 	id: string;
 	title: string;
-	value: string | boolean | number;
+	value: Value;
 	message?: string;
 }
 
@@ -27,7 +29,7 @@ export interface Step {
 	status: StepStatus;
 }
 
-export type StaterTokenValue = string | boolean | number;
+export type StaterTokenValue = Value;
 
 export interface StarterToken {
 	title?: string;
