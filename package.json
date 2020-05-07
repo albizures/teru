@@ -12,7 +12,10 @@
 		"test:types": "tsc --noEmit --composite false",
 		"test:lint": "eslint src --ext .ts,.tsx",
 		"test": "yarn test:types && yarn test:lint",
-		"start": "node ./bin"
+		"start": "node ./bin",
+		"build": "tsc",
+		"prepublish": "yarn build",
+		"release": "standard-version && git push --follow-tags origin HEAD"
 	},
 	"files": [
 		"bin",
@@ -35,10 +38,10 @@
 		"eslint-plugin-react": "^7.19.0",
 		"eslint-plugin-react-hooks": "^4.0.0",
 		"source-map-support": "^0.5.19",
+		"standard-version": "^8.0.0",
 		"typescript": "^3.8.3"
 	},
 	"dependencies": {
-		"prettier": "^2.0.5",
 		"await-to-js": "^2.1.1",
 		"ejs": "^3.1.2",
 		"execa": "^4.0.0",
@@ -50,6 +53,7 @@
 		"ink-spinner": "^3.0.1",
 		"ink-text-input": "^3.2.2",
 		"meow": "^6.1.0",
+		"prettier": "^2.0.5",
 		"react": "^16.13.1",
 		"replace-in-file": "^6.0.0",
 		"yarn-or-npm": "^3.0.1",
