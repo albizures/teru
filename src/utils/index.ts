@@ -48,7 +48,7 @@ const getStarterConfigFile = (projectDir: string) =>
 
 const defaultStaterConfig: StarterConfig = {
 	tokens: {
-		name(config: ProjectConfig) {
+		projectName(config: ProjectConfig) {
 			return {
 				defaultValue: config.name,
 			};
@@ -73,8 +73,8 @@ const getStarterConfig = (projectDir: string): StarterConfig => {
 		config.tokens = defaultStaterConfig.tokens;
 	}
 
-	if (!config.tokens.name || !config.tokens.name.defaultValue) {
-		config.tokens.name = defaultStaterConfig.tokens.name;
+	if (!config.tokens.projectName || !config.tokens.projectName.defaultValue) {
+		config.tokens.projectName = defaultStaterConfig.tokens.projectName;
 	}
 
 	return config;
