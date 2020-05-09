@@ -32,7 +32,7 @@ const Starter: React.FC<PropTypes> = (props) => {
 
 	React.useEffect(() => {
 		const currentDir = process.cwd();
-
+		setState(States.Analyzing);
 		analyzeProject(currentDir)
 			.then((config) => {
 				configRef.current = config;
@@ -66,7 +66,7 @@ const Starter: React.FC<PropTypes> = (props) => {
 	if (state === States.Idle || state === States.Analyzing) {
 		return (
 			<Ink.Box>
-				<Spinner /> Analyzing... {state}
+				<Spinner /> Analyzing...
 			</Ink.Box>
 		);
 	}
@@ -78,7 +78,7 @@ const Starter: React.FC<PropTypes> = (props) => {
 	if (state === States.ConfirmWrite) {
 		return (
 			<Ink.Text>
-				This action will modify <Ink.Text underline>ture.starter.js</Ink.Text>{' '}
+				This action will modify <Ink.Text underline>teru.starter.js</Ink.Text>{' '}
 				file, please save any changes before continue (Enter)
 			</Ink.Text>
 		);
