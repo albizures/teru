@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.6](https://github.com/albizures/teru/compare/v0.0.5...v0.0.6) (2020-05-09)
+
+
+### Features
+
+* **files:** support teru files (.teru) ([10d78b6](https://github.com/albizures/teru/commit/10d78b63d8c3513b46814d08f76bc0a9e4b02bc5))
+* **tokens:** use the correct token name ([aed862a](https://github.com/albizures/teru/commit/aed862a2ae57ba29dcdb5abbafba5f2ef9712e0b))
+
+
+### Bug Fixes
+
+* **markdown:** fix markdown ([71cbc71](https://github.com/albizures/teru/commit/71cbc71473d04864c60f3d0824563d0da75477f5))
+* **tokens:** fix error with the last token being missed ([036baf6](https://github.com/albizures/teru/commit/036baf6ff9bac22eb9832fca36596e1d29dda8e8))
+* **types:** fix typos ([6b81a6d](https://github.com/albizures/teru/commit/6b81a6d9cb78c2966ea78973168324b0bdef415f))
+
 ### 0.0.5 (2020-05-07)
 
 
