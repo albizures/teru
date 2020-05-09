@@ -1,8 +1,8 @@
-<h1 align="center">
-  teru
+<h1 align="center" style="font-size: 4em">
+  # teru
 </h1>
 
-Teru is a simplistic project generator
+Teru is an easy to use project generator
 
 ## How to start a project?
 
@@ -112,4 +112,4 @@ module.exports = {
 
 > Assuming the the starter already have the `prettier.config.js` file
 
-Using this starter config the `prettier.config.js` is going to be added only when `prettier` is `true`.
+Using this starter config the `prettier.config.js` file is going to be added only when `prettier` is `true`.
