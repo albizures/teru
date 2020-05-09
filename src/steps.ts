@@ -6,7 +6,13 @@ import {
 } from './utils';
 import { cloneRepo, gitInit } from './utils/git';
 import { compileFiles, deleteFile } from './utils/files';
-import { ProjectConfig, Token, TokeConfig, TokenValues } from './types';
+import {
+	ProjectConfig,
+	Token,
+	TokeConfig,
+	TokenValues,
+	StarterFileConfig,
+} from './types';
 
 const getTokenConfig = (token: TokeConfig, config: ProjectConfig) => {
 	return typeof token === 'function' ? token(config) : token;
@@ -22,6 +28,7 @@ const clone = createStep('Create Project ', async (config: ProjectConfig) => {
 
 	config.tokens = Object.keys(starterConfig.tokens).reduce((tokens, key) => {
 		const token = getTokenConfig(starterConfig.tokens[key], config);
+
 		tokens.push({
 			id: key,
 			message: token.message,
@@ -34,8 +41,26 @@ const clone = createStep('Create Project ', async (config: ProjectConfig) => {
 
 		return tokens;
 	}, [] as Token[]);
+
 	config.starterConfig = starterConfig;
 });
+
+const getOnlyWhenResult = (
+	file: StarterFileConfig,
+	tokenValues: TokenValues,
+	config: ProjectConfig,
+) => {
+	const { onlyWhen } = file;
+	if (onlyWhen) {
+		if (typeof onlyWhen === 'function') {
+			return onlyWhen(tokenValues, config);
+		}
+
+		return Object.keys(onlyWhen).every((token) => {
+			return onlyWhen[token] === tokenValues[token];
+		});
+	}
+};
 
 const compile = createStep(
 	'Compile templates',
@@ -53,28 +78,27 @@ const compile = createStep(
 		}, {} as TokenValues);
 
 		const files: string[] = starterConfig.files
-			.map((file) => {
+			.reduce((list, file) => {
 				if (typeof file === 'string') {
-					return file;
+					return list.concat(file);
 				}
 
 				const { onlyWhen, filename } = file;
 				if (onlyWhen) {
-					const toBeRemove = !Object.keys(onlyWhen).every((token) => {
-						return (
-							onlyWhen[token] ===
-							//  === 'true' is a workaround until different value are supported
-							(tokenValues[token] === 'true' || tokenValues[token])
-						);
-					});
+					const toBeRemoved = !getOnlyWhenResult(file, tokenValues, config);
 
-					if (toBeRemove) {
-						deleteFile(config.projectDir, filename);
-						return '';
+					if (toBeRemoved) {
+						([] as string[]).concat(filename).forEach((filename: string) => {
+							deleteFile(config.projectDir, filename);
+						});
+						return list;
+					} else {
+						return list.concat(filename);
 					}
 				}
-				return file.filename;
-			})
+
+				return list.concat(filename);
+			}, [] as string[])
 			.filter((file) => file);
 
 		await compileFiles(config, files, tokenValues);

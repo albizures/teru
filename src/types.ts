@@ -37,9 +37,13 @@ export interface StarterToken {
 	defaultValue?: StaterTokenValue;
 }
 
+export type OnlyWhen =
+	| Record<string, unknown>
+	| ((tokens: TokenValues, config: ProjectConfig) => boolean);
+
 export interface StarterFileConfig {
-	filename: string;
-	onlyWhen?: Record<string, unknown>;
+	filename: string | string[];
+	onlyWhen?: OnlyWhen;
 }
 
 export type StarterFile = StarterFileConfig | string;

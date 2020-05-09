@@ -13,12 +13,43 @@ import {
 	ProjectConfig,
 } from '../types';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-const noop = function () {};
+const getFinalFilename = (filename: string) => {
+	const { ext, dir, name } = path.parse(filename);
 
-const compileFile = async (file: string, tokens: Record<string, unknown>) => {
+	if (ext === '.teru') {
+		return path.join(dir, name);
+	}
+
+	return filename;
+};
+
+const getRealFilename = (filename: string) => {
+	if (path.extname(filename) === '.teru') {
+		return filename;
+	}
+
+	if (fs.existsSync(filename)) {
+		return filename;
+	}
+
+	return `${filename}.teru`;
+};
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+function noop() {}
+
+const deleteFile = (projectDir: string, filename: string) => {
+	fs.unlink(getRealFilename(path.join(projectDir, filename)));
+};
+
+const compileFile = async (
+	filename: string,
+	tokens: Record<string, unknown>,
+) => {
+	const realFileName = getRealFilename(filename);
+	const finalFilename = getFinalFilename(filename);
 	const str = await ejs.renderFile(
-		file,
+		realFileName,
 		{
 			tokens,
 			file: noop,
@@ -26,7 +57,11 @@ const compileFile = async (file: string, tokens: Record<string, unknown>) => {
 		{ async: true },
 	);
 
-	await fs.promises.writeFile(file, str);
+	if (finalFilename !== realFileName) {
+		fs.unlink(realFileName);
+	}
+
+	await fs.promises.writeFile(getFinalFilename(filename), str);
 };
 
 const getProjectFiles = (projectDir: string): Promise<string[]> =>
@@ -37,7 +72,13 @@ const getProjectFiles = (projectDir: string): Promise<string[]> =>
 				cwd: projectDir,
 				dot: true,
 				nodir: true,
-				ignore: ['.git/**', 'teru.starter.js'],
+				ignore: [
+					'.git/**',
+					'teru.starter.js',
+					'node_modules/**',
+					'.next/**',
+					'yarn.lock',
+				],
 			},
 			(error, files) => {
 				if (error) {
@@ -61,12 +102,19 @@ const compileFiles = async (
 	);
 };
 
+const renderFile = (filename: string, data: object) =>
+	new Promise((resolve, reject) => {
+		ejs.renderFile(filename, data, (error) => {
+			error ? reject(error) : resolve();
+		});
+	});
 const analyzeFile = async (filename: string) => {
 	const tokens = new Set<string>();
 	let config: unknown;
 	const handler = {
 		get(obj: unknown, prop: string) {
 			tokens.add(prop);
+
 			return '';
 		},
 	};
@@ -74,14 +122,10 @@ const analyzeFile = async (filename: string) => {
 		config = fileConfig;
 	};
 
-	await ejs.renderFile(
-		filename,
-		{
-			file,
-			tokens: new Proxy({}, handler),
-		},
-		{ async: true },
-	);
+	await renderFile(filename, {
+		file,
+		tokens: new Proxy({}, handler),
+	});
 
 	return {
 		file: config
@@ -206,6 +250,18 @@ const mergeStarterConfigs = (
 	};
 };
 
+const getCurrentConfig = (projectDir: string): StarterConfig => {
+	try {
+		const currentConfig = require(path.join(projectDir, 'teru.starter.js'));
+		return currentConfig as StarterConfig;
+	} catch (error) {
+		return {
+			tokens: {},
+			files: [],
+		};
+	}
+};
+
 const writeStarterConfig = async (
 	projectDir: string,
 	config: StarterConfig,
@@ -215,15 +271,12 @@ const writeStarterConfig = async (
 		await fs.promises.writeFile(serializeConfig(config), 'utf8');
 	}
 
-	const currentConfig = require(path.join(projectDir, 'teru.starter.js'));
-
-	const mergedConfig = mergeStarterConfigs(currentConfig, config);
+	const mergedConfig = mergeStarterConfigs(
+		getCurrentConfig(projectDir),
+		config,
+	);
 
 	await fs.promises.writeFile(filename, serializeConfig(mergedConfig), 'utf8');
-};
-
-const deleteFile = (projectDir: string, file: string) => {
-	fs.unlink(path.join(projectDir, file));
 };
 
 export {
