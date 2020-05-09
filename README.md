@@ -1,5 +1,5 @@
 <h1 align="center" style="font-size: 4em">
-  # teru
+  Teru
 </h1>
 
 Teru is an easy to use project generator
