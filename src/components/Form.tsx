@@ -7,6 +7,7 @@ interface Item extends Partial<FieldDescriptor> {
 	title: string;
 	id: string;
 	value: Value;
+	message?: string;
 }
 
 interface PropTypes {
@@ -27,7 +28,7 @@ const DefaultLabel: React.FC<DefaultLabelPropTypes> = ({ title }) => {
 };
 
 const getLabel = (item: Item) => {
-	return item.label ? item.label : <DefaultLabel title={item.title} />;
+	return item.message ? item.message : <DefaultLabel title={item.title} />;
 };
 
 const Form: React.FC<PropTypes> = (props) => {
@@ -36,10 +37,13 @@ const Form: React.FC<PropTypes> = (props) => {
 	const [index, setIndex] = React.useState(0);
 	const item = items[index];
 
-	const label = getLabel(item);
 	const onSubmit = (rawValue: string, value: Value) => {
 		setValue(values.concat([[rawValue, value]]));
-		if (index >= items.length - 1) {
+		setIndex(index + 1);
+	};
+
+	React.useEffect(() => {
+		if (!item) {
 			onFinish(
 				values.reduce((map, [, value], index) => {
 					const item = items[index];
@@ -47,10 +51,8 @@ const Form: React.FC<PropTypes> = (props) => {
 					return map;
 				}, {} as Record<string, Value>),
 			);
-		} else {
-			setIndex(index + 1);
 		}
-	};
+	}, [item, values, onFinish, items]);
 
 	return (
 		<Ink.Box>
@@ -60,12 +62,18 @@ const Form: React.FC<PropTypes> = (props) => {
 
 					return (
 						<Ink.Box key={index}>
-							{label}: {values[index][0]}
+							<Ink.Color grey>{label}</Ink.Color>: {values[index][0]}
 						</Ink.Box>
 					);
 				})}
 			</Ink.Static>
-			<Field label={label} defaultValue={item.value} onSubmit={onSubmit} />
+			{item && (
+				<Field
+					label={getLabel(item)}
+					defaultValue={item.value}
+					onSubmit={onSubmit}
+				/>
+			)}
 		</Ink.Box>
 	);
 };
