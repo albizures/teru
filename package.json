@@ -38,7 +38,7 @@
 		"eslint-plugin-react": "^7.19.0",
 		"eslint-plugin-react-hooks": "^4.0.0",
 		"source-map-support": "^0.5.19",
-		"standard-version": "^8.0.0",
+		"standard-version": "^8.0.1",
 		"typescript": "^3.8.3"
 	},
 	"dependencies": {
