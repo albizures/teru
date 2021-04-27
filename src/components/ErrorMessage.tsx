@@ -10,11 +10,11 @@ const ErrorMessage: React.FC<PropTypes> = (props) => {
 	const { verbose = true, error } = props;
 	return (
 		<>
-			<Ink.Color red>Something bad happend :(</Ink.Color>
+			<Ink.Text color="red">Something bad happend :(</Ink.Text>
 			{verbose && (
 				<Ink.Box marginLeft={2}>
-					<Ink.Color red>{error.message}</Ink.Color>
-					<Ink.Color red>{error.stack}</Ink.Color>
+					<Ink.Text color="red">{error.message}</Ink.Text>
+					<Ink.Text color="red">{error.stack}</Ink.Text>
 				</Ink.Box>
 			)}
 		</>

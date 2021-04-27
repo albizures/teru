@@ -11,6 +11,8 @@ module.exports = {
 		'@typescript-eslint/explicit-function-return-type': 'off',
 		'@typescript-eslint/ban-ts-ignore': 'off',
 		'@typescript-eslint/no-var-requires': 'off',
+		'@typescript-eslint/ban-types': 'warn',
+		'@typescript-eslint/ban-ts-comment': 'warn',
 		'no-mixed-spaces-and-tabs': 'off',
 		'react-hooks/rules-of-hooks': 'error',
 		'react-hooks/exhaustive-deps': 'warn',

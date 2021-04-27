@@ -1,7 +1,7 @@
 import path from 'path';
 import React from 'react';
 import Spinner from 'ink-spinner';
-import { Text, Color, Box } from 'ink';
+import { Text, Box } from 'ink';
 import { clone, gitSetup, installDeps, compile } from './steps';
 import { ProjectConfig, StepStatus, Step, Value } from './types';
 import StepList from './components/StepList';
@@ -138,10 +138,10 @@ const App: React.FC<PropTypes> = (props) => {
 		return (
 			<>
 				<Box>
-					<Color green>
+					<Text color="green">
 						<Spinner type="dots" />
-					</Color>{' '}
-					{spinnerMessage}
+					</Text>{' '}
+					<Text>{spinnerMessage}</Text>
 				</Box>
 			</>
 		);
@@ -173,9 +173,11 @@ const App: React.FC<PropTypes> = (props) => {
 		<>
 			<StepList steps={steps} />
 			<Box marginTop={1}>
-				All set up at <Text underline>{projectDir}</Text>
+				<Text>
+					All set up at <Text underline>{projectDir}</Text>
+				</Text>
 			</Box>
-			<Color green>Happy coding :)</Color>
+			<Text color="green">Happy coding :)</Text>
 		</>
 	);
 };

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Color, Box } from 'ink';
+import { Box, Text } from 'ink';
 import { Step, StepStatus } from '../types';
 
 interface PropTypes {
@@ -26,11 +26,11 @@ const StepList: React.FC<PropTypes> = (props) => {
 			{steps.map((step, index) => {
 				return (
 					<Box marginLeft={2} marginBottom={1} key={index}>
-						<Color {...getColor(step.status)} black>
+						<Text {...getColor(step.status)} color="black">
 							{' '}
 							{step.status}{' '}
-						</Color>{' '}
-						{step.name}
+						</Text>{' '}
+						<Text>{step.name}</Text>
 					</Box>
 				);
 			})}

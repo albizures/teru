@@ -39,7 +39,13 @@ const run = () => {
 	const isValidStarter = Boolean(hostedGitInfo.fromUrl(starter));
 
 	if (name && starter && isValidStarter) {
-		render(React.createElement(App, { name, starter, ...cli.flags }));
+		render(
+			React.createElement(App, {
+				name,
+				starter,
+				verbose: Boolean(cli.flags.verbose),
+			}),
+		);
 		return;
 	}
 

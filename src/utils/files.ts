@@ -105,7 +105,7 @@ const compileFiles = async (
 const renderFile = (filename: string, data: object) =>
 	new Promise((resolve, reject) => {
 		ejs.renderFile(filename, data, (error) => {
-			error ? reject(error) : resolve();
+			error ? reject(error) : resolve(filename);
 		});
 	});
 const analyzeFile = async (filename: string) => {
@@ -142,7 +142,9 @@ const analyzeProject = async (projectDir: string) => {
 	const projectFiles = await getProjectFiles(projectDir);
 
 	const { files, tokens } = (
-		await Promise.all(projectFiles.map((filename) => analyzeFile(filename)))
+		await Promise.all(
+			projectFiles.map((filename) => analyzeFile(filename)),
+		)
 	).reduce(
 		(value, data) => {
 			if (
@@ -172,19 +174,22 @@ const analyzeProject = async (projectDir: string) => {
 };
 
 const serializeConfig = (config: StarterConfig) => {
-	return prettier.format(`module.exports = ${JSON.stringify(config)}`, {
-		parser: 'babel',
-		trailingComma: 'all',
-		useTabs: true,
-		tabWidth: 2,
-		semi: true,
-		printWidth: 40,
-		jsxSingleQuote: false,
-		singleQuote: true,
-		bracketSpacing: true,
-		jsxBracketSameLine: false,
-		arrowParens: 'always',
-	});
+	return prettier.format(
+		`module.exports = ${JSON.stringify(config)}`,
+		{
+			parser: 'babel',
+			trailingComma: 'all',
+			useTabs: true,
+			tabWidth: 2,
+			semi: true,
+			printWidth: 40,
+			jsxSingleQuote: false,
+			singleQuote: true,
+			bracketSpacing: true,
+			jsxBracketSameLine: false,
+			arrowParens: 'always',
+		},
+	);
 };
 
 const getFilename = (file: StarterFile) => {
@@ -201,7 +206,10 @@ const mergeStarterConfigs = (
 	currentConfig: StarterConfig,
 	newConfig: StarterConfig,
 ) => {
-	const tokens: TokenConfigs = Object.assign({}, currentConfig.tokens);
+	const tokens: TokenConfigs = Object.assign(
+		{},
+		currentConfig.tokens,
+	);
 
 	Object.keys(newConfig.tokens).forEach((key) => {
 		if (!tokens[key]) {
@@ -246,13 +254,18 @@ const mergeStarterConfigs = (
 
 	return {
 		tokens,
-		files: files.concat(oldFiles.filter((file) => typeof file !== 'string')),
+		files: files.concat(
+			oldFiles.filter((file) => typeof file !== 'string'),
+		),
 	};
 };
 
 const getCurrentConfig = (projectDir: string): StarterConfig => {
 	try {
-		const currentConfig = require(path.join(projectDir, 'teru.starter.js'));
+		const currentConfig = require(path.join(
+			projectDir,
+			'teru.starter.js',
+		));
 		return currentConfig as StarterConfig;
 	} catch (error) {
 		return {
@@ -276,7 +289,11 @@ const writeStarterConfig = async (
 		config,
 	);
 
-	await fs.promises.writeFile(filename, serializeConfig(mergedConfig), 'utf8');
+	await fs.promises.writeFile(
+		filename,
+		serializeConfig(mergedConfig),
+		'utf8',
+	);
 };
 
 export {

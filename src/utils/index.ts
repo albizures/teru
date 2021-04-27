@@ -37,7 +37,11 @@ const install = async (projectDir: string): Promise<void> => {
 
 	process.chdir(projectDir);
 
-	await to(fs.remove(pkgManager === 'npm' ? 'package-lock.json' : 'yarn.lock'));
+	await to(
+		fs.remove(
+			pkgManager === 'npm' ? 'package-lock.json' : 'yarn.lock',
+		),
+	);
 	await to(spawn(`${pkgManager} install`, { cwd: projectDir }));
 
 	process.chdir(prevDir);
@@ -73,8 +77,12 @@ const getStarterConfig = (projectDir: string): StarterConfig => {
 		config.tokens = defaultStaterConfig.tokens;
 	}
 
-	if (!config.tokens.projectName || !config.tokens.projectName.defaultValue) {
-		config.tokens.projectName = defaultStaterConfig.tokens.projectName;
+	if (
+		!config.tokens.projectName ||
+		!config.tokens.projectName.defaultValue
+	) {
+		config.tokens.projectName =
+			defaultStaterConfig.tokens.projectName;
 	}
 
 	return config;
@@ -89,4 +97,9 @@ const deleteStarterConfigfile = (projectDir: string) => {
 	fs.unlinkSync(configFile);
 };
 
-export { createStep, install, deleteStarterConfigfile, getStarterConfig };
+export {
+	createStep,
+	install,
+	deleteStarterConfigfile,
+	getStarterConfig,
+};

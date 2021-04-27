@@ -10,7 +10,7 @@ const getDefaultValueLabel = (value: Value, currentValue: string) => {
 	}
 
 	return value !== '' && currentValue === '' ? (
-		<Ink.Color gray> ({value})</Ink.Color>
+		<Ink.Text color="gray"> ({value})</Ink.Text>
 	) : (
 		''
 	);
@@ -52,9 +52,13 @@ const Field: React.FC<PropTypes> = (props) => {
 
 	return (
 		<Ink.Box>
-			{label}
-			{defaultValueLabel}:{' '}
-			<TextInput value={value} onChange={onChange} onSubmit={onSubmit} />
+			<Ink.Text>{label}</Ink.Text>
+			<Ink.Text>{defaultValueLabel}: </Ink.Text>
+			<TextInput
+				value={value}
+				onChange={onChange}
+				onSubmit={onSubmit}
+			/>
 		</Ink.Box>
 	);
 };

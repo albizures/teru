@@ -66,7 +66,7 @@ const Starter: React.FC<PropTypes> = (props) => {
 	if (state === States.Idle || state === States.Analyzing) {
 		return (
 			<Ink.Box>
-				<Spinner /> Analyzing...
+				<Spinner /> <Ink.Text>Analyzing...</Ink.Text>
 			</Ink.Box>
 		);
 	}
@@ -78,8 +78,9 @@ const Starter: React.FC<PropTypes> = (props) => {
 	if (state === States.ConfirmWrite) {
 		return (
 			<Ink.Text>
-				This action will modify <Ink.Text underline>teru.starter.js</Ink.Text>{' '}
-				file, please save any changes before continue (Enter)
+				This action will modify{' '}
+				<Ink.Text underline>teru.starter.js</Ink.Text> file, please
+				save any changes before continue (Enter)
 			</Ink.Text>
 		);
 	}

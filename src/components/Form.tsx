@@ -28,7 +28,11 @@ const DefaultLabel: React.FC<DefaultLabelPropTypes> = ({ title }) => {
 };
 
 const getLabel = (item: Item) => {
-	return item.message ? item.message : <DefaultLabel title={item.title} />;
+	return item.message ? (
+		item.message
+	) : (
+		<DefaultLabel title={item.title} />
+	);
 };
 
 const Form: React.FC<PropTypes> = (props) => {
@@ -56,16 +60,17 @@ const Form: React.FC<PropTypes> = (props) => {
 
 	return (
 		<Ink.Box>
-			<Ink.Static>
-				{items.slice(0, index).map((item, index) => {
+			<Ink.Static items={items.slice(0, index)}>
+				{(item, index) => {
 					const label = getLabel(item);
 
 					return (
 						<Ink.Box key={index}>
-							<Ink.Color grey>{label}</Ink.Color>: {values[index][0]}
+							<Ink.Text color="grey">{label}</Ink.Text>:{' '}
+							{values[index][0]}
 						</Ink.Box>
 					);
-				})}
+				}}
 			</Ink.Static>
 			{item && (
 				<Field
